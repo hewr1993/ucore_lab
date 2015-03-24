@@ -179,6 +179,7 @@
   先等待8042键盘控制器输入缓存为空，然后写入0x64表示要向P2端口写入数据。
   继续等待输入缓存为空，然后将0x60端口赋值为0xdf。
   这样A20位就赋值为1。
+
 	```
 			# Enable A20:
 			#  For backwards compatibility with the earliest PCs, physical
@@ -205,4 +206,40 @@
 			# identical to physical addresses, so that the
 			# effective memory map does not change during the switch.
 	```
+* 初始化gdt表，使能cr0寄存器的PE位，从实模式进入保护模式
+
+	```
+		lgdt gdtdesc
+		movl %cr0, %eax
+		orl $CR0_PE_ON, %eax
+		movl %eax, %cr0
+	```
+* 长跳转更新cs基地址 
+
+	```
+		ljmp $PROT_MODE_CSEG, $protcseg
+	```
+* 设置段寄存器，并建立堆栈
+
+	```
+		.code32                                             # Assemble for 32-bit mode
+		protcseg:
+			# Set up the protected-mode data segment registers
+			movw $PROT_MODE_DSEG, %ax                       # Our data segment selector
+			movw %ax, %ds                                   # -> DS: Data Segment
+			movw %ax, %es                                   # -> ES: Extra Segment
+			movw %ax, %fs                                   # -> FS
+			movw %ax, %gs                                   # -> GS
+			movw %ax, %ss                                   # -> SS: Stack Segment
+			# Set up the stack pointer and call into C. The stack region is from 0--start(0x7c00)
+			movl $0x0, %ebp
+			movl $start, %esp
+	```
+* 进入保护模式完成，进入bootmain
+
+	```
+		call bootmain
+	```
+
+## Ex 4
 
