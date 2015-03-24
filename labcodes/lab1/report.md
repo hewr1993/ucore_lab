@@ -290,3 +290,30 @@
 	```
 		((void (*)(void))(ELFHDR->e_entry & 0xFFFFFF))();
 	```
+
+## Ex5
+* 根据提示补全代码即可，详见代码。
+* 输出时发现不一定有STACKFRAME_DEPTH这么多的调用，应判断ebp是否为0。
+* 本机输出如下
+```
+ebp:0x00007b18 eip:0x00100a18 args:0x00010094 0x00000000 0x00007b48 0x0010007f
+    kern/debug/kdebug.c:306: print_stackframe+21
+ebp:0x00007b28 eip:0x00100d15 args:0x00000000 0x00000000 0x00000000 0x00007b98
+    kern/debug/kmonitor.c:125: mon_backtrace+10
+ebp:0x00007b48 eip:0x0010007f args:0x00000000 0x00007b70 0xffff0000 0x00007b74
+    kern/init/init.c:48: grade_backtrace2+19
+ebp:0x00007b68 eip:0x001000a0 args:0x00000000 0xffff0000 0x00007b94 0x00000029
+    kern/init/init.c:53: grade_backtrace1+27
+ebp:0x00007b88 eip:0x001000bc args:0x00000000 0x00100000 0xffff0000 0x00100043
+    kern/init/init.c:58: grade_backtrace0+19
+ebp:0x00007ba8 eip:0x001000dc args:0x00000000 0x00000000 0x00000000 0x00103240
+    kern/init/init.c:63: grade_backtrace+26
+ebp:0x00007bc8 eip:0x00100050 args:0x00000000 0x00000000 0x00010094 0x00000000
+    kern/init/init.c:28: kern_init+79
+ebp:0x00007bf8 eip:0x00007d66 args:0xc031fcfa 0xc08ed88e 0x64e4d08e 0xfa7502a8
+    <unknow>: -- 0x00007d65 --
+```
+* 最后一行，各数字意义
+	* ebp表示bootmain栈底，bootloader设置堆栈起始地址为0x7c00，call bootmain后即为0x7bf8
+	* eip表示返回地址
+	* 其后四个为传入bootmain的参数，也可能并没有传入如此多的参数
