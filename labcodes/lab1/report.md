@@ -100,8 +100,8 @@
 ## Ex2
 1. 从CPU加电后执行的第一条指令开始，单步跟踪BIOS的执行。
 
-	> * 删去tools/gdbinit最后一行，避免qemu在gdb连接后马上启动。
-	> * 修改makefile。不希望X11来捣乱，qemu启动时置后台，gdb结束即kill掉进程。
+	* 删去tools/gdbinit最后一行，避免qemu在gdb连接后马上启动。
+	* 修改makefile。不希望X11来捣乱，qemu启动时置后台，gdb结束即kill掉进程。
 	```
 	debug-nox: $(UCOREIMG)
 		$(V)$(QEMU) -S -s -d in_asm -D $(BINDIR)/q.log -serial mon:stdio -hda $< -nographic &
@@ -109,7 +109,7 @@
 		$(V)$(TERMINAL) -e "gdb -q -x tools/gdbinit"
 		$(V)$(TERMINAL) -e "pkill qemu-system-i38"
 	```
-	> * 运行如下命令，si即可单步调试。
+	* 运行如下命令，si即可单步调试。
 	```
 	make debug-nox
 	```
