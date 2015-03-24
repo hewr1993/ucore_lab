@@ -268,3 +268,25 @@
 	```
 
 1. bootloader是如何加载ELF格式的OS？
+
+	> * readseg函数根据offset算出扇区号与偏移，并利用readsect读取count字节内容到va。
+	> * bootmain首先把磁盘第一页通过readseg读进，即ELF头部信息，并检查合法性
+	```
+		readseg((uintptr_t)ELFHDR, SECTSIZE * 8, 0);
+		// is this a valid ELF?
+		if (ELFHDR->e_magic != ELF_MAGIC) {
+			goto bad;
+		}
+	```
+	> * 从每一段中找到被加载位置并通过readseg读进
+	```
+		ph = (struct proghdr *)((uintptr_t)ELFHDR + ELFHDR->e_phoff);
+		eph = ph + ELFHDR->e_phnum;
+		for (; ph < eph; ph ++) {
+			readseg(ph->p_va & 0xFFFFFF, ph->p_memsz, ph->p_offset);
+		}
+	```
+	> * 调用入口函数
+	```
+		((void (*)(void))(ELFHDR->e_entry & 0xFFFFFF))();
+	```
