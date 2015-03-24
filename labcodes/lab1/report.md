@@ -2,7 +2,7 @@
 -----
 ## Ex1
 1. 操作系统镜像文件ucore.img是如何一步一步生成的？（需要比较详细地解释Makefile中每一条相关命令和命令参数的含义，以及说明命令导致的结果）
-	```
+```
 	前言：各指令各参数意义在最后，正文注重逻辑梳理。
 
 	生成ucore.img的直接指令如下
@@ -90,7 +90,7 @@
 	objcopy各参数意义
 		-S  移除所有符号和重定位信息
 		-O <bfdname>  指定输出格式
-	```
+```
 
 1. 一个被系统认为是符合规范的硬盘主引导扇区的特征是什么？
 
@@ -113,44 +113,43 @@
 	```
 	> * 运行如下命令，si即可单步调试。
 	```
-	make debug-nox
+		make debug-nox
 	```
 
 2. 在初始化位置0x7c00设置实地址断点,测试断点正常。
 
 	> * 在tools/gdbinit最后加入一行
 	```
-	b *0x7c00
+		b *0x7c00
 	```
 	> * 运行以下指令可见汇编指令
 	```
-	make debug-nox
-	c
-	x /5i $pc
+		make debug-nox
+		c
+		x /5i $pc
 	```
 
 3. 从0x7c00开始跟踪代码运行,将单步跟踪反汇编得到的代码与bootasm.S和 bootblock.asm进行比较。
 
 	> * 运行以下指令
 	```
-	make debug-nox
-	c
-	c
+		make debug-nox
+		c
+		c
 	```
 	> * 可得bin/q.log部分内容如下
 	```
-	----------------
-	IN: 
-	0x00007c00:  cli    
-	0x00007c01:  cld    
-	0x00007c02:  xor    %ax,%ax
-	0x00007c04:  mov    %ax,%ds
-	0x00007c06:  mov    %ax,%es
-	0x00007c08:  mov    %ax,%ss
+		IN: 
+		0x00007c00:  cli    
+		0x00007c01:  cld    
+		0x00007c02:  xor    %ax,%ax
+		0x00007c04:  mov    %ax,%ds
+		0x00007c06:  mov    %ax,%es
+		0x00007c08:  mov    %ax,%ss
 
-	----------------
-	IN: 
-	0x00007c0a:  in     $0x64,%al
+		----------------
+		IN: 
+		0x00007c0a:  in     $0x64,%al
 	```
 	> * 比较得与bootasm.S和bootblock.asm一致。
 
@@ -158,9 +157,9 @@
 
 	> * 运行以下指令
 	```
-	make debug-nox
-	b init.c:30
-	c
+		make debug-nox
+		b init.c:30
+		c
 	```
 
 ## Ex3
