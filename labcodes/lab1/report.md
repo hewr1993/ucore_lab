@@ -242,4 +242,29 @@
 	```
 
 ## Ex 4
+1. bootloader如何读取硬盘扇区的？
 
+	> * 观察bootmain.c中的readsect
+	> * 等待磁盘
+		```
+			waitdisk();
+		```
+	> * 读取数量设为1，32位磁盘号secno均分成四段，最高段强制为1110，写入0x20表示读扇区
+		```
+			outb(0x1F2, 1);                         // count = 1
+			outb(0x1F3, secno & 0xFF);
+			outb(0x1F4, (secno >> 8) & 0xFF);
+			outb(0x1F5, (secno >> 16) & 0xFF);
+			outb(0x1F6, ((secno >> 24) & 0xF) | 0xE0);
+			outb(0x1F7, 0x20);                      // cmd 0x20 - read sectors
+		```
+	> * 等待磁盘
+		```
+			waitdisk();
+		```
+	> * 从0x1F0把扇区读取到dst指向的内存
+		```
+			insl(0x1F0, dst, SECTSIZE / 4);
+		```
+
+1. bootloader是如何加载ELF格式的OS？
