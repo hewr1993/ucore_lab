@@ -99,6 +99,7 @@
 
 ## Ex2
 1. 从CPU加电后执行的第一条指令开始，单步跟踪BIOS的执行。
+
 	> * 删去tools/gdbinit最后一行，避免qemu在gdb连接后马上启动。
 	> * 修改makefile。不希望X11来捣乱，qemu启动时置后台，gdb结束即kill掉进程。
 	```
