@@ -221,9 +221,10 @@ debug: $(UCOREIMG)
 	$(V)$(TERMINAL) -e "gdb -q -tui -x tools/gdbinit"
 	
 debug-nox: $(UCOREIMG)
-	$(V)$(QEMU) -S -s -serial mon:stdio -hda $< -nographic &
+	$(V)$(QEMU) -S -s -d in_asm -D $(BINDIR)/q.log -serial mon:stdio -hda $< -nographic &
 	$(V)sleep 2
 	$(V)$(TERMINAL) -e "gdb -q -x tools/gdbinit"
+	$(V)$(TERMINAL) -e "pkill qemu-system-i38"
 
 .PHONY: grade touch
 
