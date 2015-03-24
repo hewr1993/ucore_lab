@@ -2,6 +2,7 @@
 -----
 ## Ex1
 1. 操作系统镜像文件ucore.img是如何一步一步生成的？（需要比较详细地解释Makefile中每一条相关命令和命令参数的含义，以及说明命令导致的结果）
+	> 
 	```
 	前言：各指令各参数意义在最后，正文注重逻辑梳理。
 
@@ -92,16 +93,16 @@
 		-O <bfdname>  指定输出格式
 	```
 1. 一个被系统认为是符合规范的硬盘主引导扇区的特征是什么？
-	* 观察sign.c，要求读入文件长度为510字节，写入0x55和0xAA后变为512字节。
-	* 长度为512字节
-	* 倒数第二字节为0x55
-	* 最后一个字节为0xAA
+	> * 观察sign.c，要求读入文件长度为510字节，写入0x55和0xAA后变为512字节。
+	> * 长度为512字节
+	> * 倒数第二字节为0x55
+	> * 最后一个字节为0xAA
 
 ## Ex2
 1. 从CPU加电后执行的第一条指令开始，单步跟踪BIOS的执行。
 
-	* 删去tools/gdbinit最后一行，避免qemu在gdb连接后马上启动。
-	* 修改makefile。不希望X11来捣乱，qemu启动时置后台，gdb结束即kill掉进程。
+	> * 删去tools/gdbinit最后一行，避免qemu在gdb连接后马上启动。
+	> * 修改makefile。不希望X11来捣乱，qemu启动时置后台，gdb结束即kill掉进程。
 	```
 	debug-nox: $(UCOREIMG)
 		$(V)$(QEMU) -S -s -d in_asm -D $(BINDIR)/q.log -serial mon:stdio -hda $< -nographic &
@@ -109,7 +110,7 @@
 		$(V)$(TERMINAL) -e "gdb -q -x tools/gdbinit"
 		$(V)$(TERMINAL) -e "pkill qemu-system-i38"
 	```
-	* 运行如下命令，si即可单步调试。
+	> * 运行如下命令，si即可单步调试。
 	```
 	make debug-nox
 	```
