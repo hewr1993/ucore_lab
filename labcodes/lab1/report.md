@@ -165,6 +165,7 @@
 
 * 观察bootasm.S，从start开始。
 * 首先初始化寄存器为0
+
 	```
 		cli                                             # Disable interrupts
 		cld                                             # String operations increment
