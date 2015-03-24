@@ -163,8 +163,8 @@
 ## Ex3
 ### 分析bootloader 进入保护模式的过程。
 
-> * 观察bootasm.S，从start开始。
-> * 首先初始化寄存器为0
+* 观察bootasm.S，从start开始。
+* 首先初始化寄存器为0
 	```
 		cli                                             # Disable interrupts
 		cld                                             # String operations increment
@@ -174,7 +174,7 @@
 		movw %ax, %es                                   # -> Extra Segment
 		movw %ax, %ss                                   # -> Stack Segment
 	```
-> * 然后使能A20，使32位地址线可用。\\
+* 然后使能A20，使32位地址线可用。
   先等待8042键盘控制器输入缓存为空，然后写入0x64表示要向P2端口写入数据。
   继续等待输入缓存为空，然后将0x60端口赋值为0xdf。
   这样A20位就赋值为1。
