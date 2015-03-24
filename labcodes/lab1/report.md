@@ -2,7 +2,7 @@
 -----
 ## Ex1
 1. 操作系统镜像文件ucore.img是如何一步一步生成的？（需要比较详细地解释Makefile中每一条相关命令和命令参数的含义，以及说明命令导致的结果）
-```
+	```
 	前言：各指令各参数意义在最后，正文注重逻辑梳理。
 
 	生成ucore.img的直接指令如下
@@ -90,7 +90,7 @@
 	objcopy各参数意义
 		-S  移除所有符号和重定位信息
 		-O <bfdname>  指定输出格式
-```
+	```
 
 1. 一个被系统认为是符合规范的硬盘主引导扇区的特征是什么？
 
@@ -161,4 +161,46 @@
 	```
 
 ## Ex3
-1. 
+### 分析bootloader 进入保护模式的过程。
+* 观察bootasm.S，从start开始。
+* 首先初始化寄存器为0
+	```
+		cli                                             # Disable interrupts
+		cld                                             # String operations increment
+		# Set up the important data segment registers (DS, ES, SS).
+		xorw %ax, %ax                                   # Segment number zero
+		movw %ax, %ds                                   # -> Data Segment
+		movw %ax, %es                                   # -> Extra Segment
+		movw %ax, %ss                                   # -> Stack Segment
+	```
+* 然后使能A20，使32位地址线可用。
+  先等待8042键盘控制器输入缓存为空，然后写入0x64表示要向P2端口写入数据。
+  继续等待输入缓存为空，然后将0x60端口赋值为0xdf。
+  这样A20位就赋值为1。
+	```
+			# Enable A20:
+			#  For backwards compatibility with the earliest PCs, physical
+			#  address line 20 is tied low, so that addresses higher than
+			#  1MB wrap around to zero by default. This code undoes this.
+		seta20.1:
+			inb $0x64, %al                                  # Wait for not busy(8042 input buffer empty).
+			testb $0x2, %al
+			jnz seta20.1
+
+			movb $0xd1, %al                                 # 0xd1 -> port 0x64
+			outb %al, $0x64                                 # 0xd1 means: write data to 8042's P2 port
+
+		seta20.2:
+			inb $0x64, %al                                  # Wait for not busy(8042 input buffer empty).
+			testb $0x2, %al
+			jnz seta20.2
+
+			movb $0xdf, %al                                 # 0xdf -> port 0x60
+			outb %al, $0x60                                 # 0xdf = 11011111, means set P2's A20 bit(the 1 bit) to 1
+
+			# Switch from real to protected mode, using a bootstrap GDT
+			# and segment translation that makes virtual addresses
+			# identical to physical addresses, so that the
+			# effective memory map does not change during the switch.
+	```
+
