@@ -14,4 +14,9 @@ tags
 .codelite
 *.project
 *.workspace
-*q.log
+a.out
+*.log
+*.exe
+chytesting
+disk0
+*.orig
