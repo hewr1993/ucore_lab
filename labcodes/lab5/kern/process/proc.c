@@ -120,7 +120,7 @@ alloc_proc(void) {
 		proc->tf = NULL;
 		proc->cr3 = boot_cr3;
 		proc->flags = 0;
-		memset(proc->name, 0, sizeof(proc->name));
+		memset(proc->name, 0, PROC_NAME_LEN);
 		proc->wait_state = 0;
 		proc->cptr = proc->yptr = proc->optr = NULL;
     }
@@ -423,10 +423,10 @@ do_fork(uint32_t clone_flags, uintptr_t stack, struct trapframe *tf) {
 	}
 	proc->parent = current;
 	assert(current->wait_state == 0);
-	if (setup_kstack(proc)) {
+	if (setup_kstack(proc) != 0) {
 		goto bad_fork_cleanup_proc;
 	}
-	if (copy_mm(clone_flags, proc)) {
+	if (copy_mm(clone_flags, proc) != 0) {
 		goto bad_fork_cleanup_kstack;
 	}
 	copy_thread(proc, stack, tf);
