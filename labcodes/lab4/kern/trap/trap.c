@@ -48,6 +48,18 @@ idt_init(void) {
       *     You don't know the meaning of this instruction? just google it! and check the libs/x86.h to know more.
       *     Notice: the argument of lidt is idt_pd. try to find it!
       */
+	extern uintptr_t __vectors[];
+	int i;
+	for (i = 0; i < sizeof(idt) / sizeof(struct gatedesc); ++i) { 
+		if (i == T_SYSCALL) {
+            SETGATE(idt[i], 1, GD_KTEXT, __vectors[i], DPL_USER);
+        } else if (i == T_SWITCH_TOK) {
+            SETGATE(idt[i], 0, GD_KTEXT, __vectors[i], DPL_USER);
+        } else {
+            SETGATE(idt[i], 0, GD_KTEXT, __vectors[i], DPL_KERNEL);
+        }
+	}
+	lidt(&idt_pd);
 }
 
 static const char *
@@ -162,6 +174,8 @@ pgfault_handler(struct trapframe *tf) {
 static volatile int in_swap_tick_event = 0;
 extern struct mm_struct *check_mm_struct;
 
+int TICK_COUNT = 0;
+
 static void
 trap_dispatch(struct trapframe *tf) {
     char c;
@@ -186,6 +200,11 @@ trap_dispatch(struct trapframe *tf) {
          * (2) Every TICK_NUM cycle, you can print some info using a funciton, such as print_ticks().
          * (3) Too Simple? Yes, I think so!
          */
+		++TICK_COUNT;
+		if (TICK_COUNT == TICK_NUM) {
+			print_ticks();
+			TICK_COUNT = 0;
+		}
         break;
     case IRQ_OFFSET + IRQ_COM1:
         c = cons_getc();
