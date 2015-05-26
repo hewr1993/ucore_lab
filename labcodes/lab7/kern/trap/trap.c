@@ -242,13 +242,8 @@ trap_dispatch(struct trapframe *tf) {
          * IMPORTANT FUNCTIONS:
 	     * run_timer_list
          */
-		++TICK_COUNT;
-		if (TICK_COUNT == TICK_NUM) {
-			//print_ticks();
-			TICK_COUNT = 0;
-			assert(current != NULL);
-			current->need_resched = 1;
-		}
+		ticks++;
+		run_timer_list();
         break;
     case IRQ_OFFSET + IRQ_COM1:
         c = cons_getc();
