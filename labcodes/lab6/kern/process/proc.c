@@ -133,6 +133,12 @@ alloc_proc(void) {
 		memset(proc->name, 0, sizeof(proc->name));
 		proc->wait_state = 0;
 		proc->cptr = proc->yptr = proc->optr = NULL;
+		proc->rq = NULL;
+		proc->run_link.prev = proc->run_link.next = NULL;
+		proc->time_slice = 0;
+		proc->lab6_run_pool.left = proc->lab6_run_pool.right = proc->lab6_run_pool.parent = NULL;
+		proc->lab6_stride = 0;
+		proc->lab6_priority = 0;
     }
     return proc;
 }
